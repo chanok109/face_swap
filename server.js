@@ -571,12 +571,21 @@ const server = http.createServer((req, res) => {
   }
 
   // ---------- Static files ----------
-  // We serve files from __dirname (the root of the project) since public directory was missing and files are here
   let reqPath = pathname === '/' ? '/index.html' : pathname;
-  const filePath = path.join(__dirname, reqPath);
+  
+  let filePath;
+  let allowedBaseDir;
+  
+  if (reqPath.startsWith('/gallery/')) {
+    filePath = path.join(STORAGE_DIR, reqPath);
+    allowedBaseDir = STORAGE_DIR;
+  } else {
+    filePath = path.join(__dirname, reqPath);
+    allowedBaseDir = __dirname;
+  }
 
   // Simple security check to prevent directory traversal
-  if (!filePath.startsWith(__dirname) || reqPath.includes('..')) {
+  if (!filePath.startsWith(allowedBaseDir) || reqPath.includes('..')) {
     sendJson(res, 403, { ok: false, message: 'Invalid path' });
     return;
   }
