@@ -1,0 +1,21 @@
+{
+  "stats": {
+    "totalSwaps": 2,
+    "successSwaps": 0,
+    "failedSwaps": 2
+  },
+  "activity": [
+    {
+      "taskId": null,
+      "status": "failed",
+      "templateId": "astronaut",
+      "requestedAt": 1783916356756
+    },
+    {
+      "taskId": null,
+      "status": "failed",
+      "templateId": "astronaut",
+      "requestedAt": 1783916178873
+    }
+  ]
+}

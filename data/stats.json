@@ -1,0 +1,96 @@
+{
+  "stats": {
+    "totalSwaps": 12,
+    "successSwaps": 9,
+    "failedSwaps": 3
+  },
+  "activity": [
+    {
+      "taskId": "6d1690f14f13c75567b6653f655e3e01",
+      "status": "completed",
+      "templateId": "princess",
+      "requestedAt": 1784089944631,
+      "receivedAt": 1784089954809,
+      "resultImage": "https://art-global.ezmaker.ai/face-swap/16d8d82cbbefd17a2ff1c64136ce2ed9.webp"
+    },
+    {
+      "taskId": "a090c83b1db5c6495cbc3c0b7ba6b62d",
+      "status": "timeout",
+      "templateId": "EXPLORE_1",
+      "requestedAt": 1784089695357,
+      "receivedAt": 1784089875801,
+      "resultImage": "https://art-global.ezmaker.ai/face-swap/907e62e13a11d570ab32d12be5929840.webp"
+    },
+    {
+      "taskId": "0485159487b30e27352dfee229f153d2",
+      "status": "timeout",
+      "templateId": "EXPLORE_1",
+      "requestedAt": 1784089613402,
+      "receivedAt": 1784089793676,
+      "resultImage": "https://art-global.ezmaker.ai/face-swap/907e62e13a11d570ab32d12be5929840.webp"
+    },
+    {
+      "taskId": "7ebefc069340b82bec3280274c23f7e2",
+      "status": "completed",
+      "templateId": "inventor",
+      "requestedAt": 1784088599521,
+      "receivedAt": 1784088614673,
+      "resultImage": "https://art-global.ezmaker.ai/face-swap/5eb08ea3391746780c3ea40409dd65ec.webp"
+    },
+    {
+      "taskId": "bff4397b6d2539cad518d8b0512bdf94",
+      "status": "completed",
+      "templateId": "princess",
+      "requestedAt": 1784088563795,
+      "receivedAt": 1784088578511,
+      "resultImage": "https://art-global.ezmaker.ai/face-swap/2415bd6d31eea3a1da2b9f69a309d9e2.webp"
+    },
+    {
+      "taskId": "2ad3396ce426b77ae666881bd598c5c8",
+      "status": "completed",
+      "templateId": "ninja",
+      "requestedAt": 1784085808908,
+      "receivedAt": 1784085822849,
+      "resultImage": "https://art-global.ezmaker.ai/face-swap/c358d6479dc7dc0a28fd3f933a6ef8fb.webp"
+    },
+    {
+      "taskId": "3f302296b8326595fa9dcd227514a1d1",
+      "status": "completed",
+      "templateId": "thai_traditional",
+      "requestedAt": 1784085285568,
+      "receivedAt": 1784085295901
+    },
+    {
+      "taskId": "ff187976657aa361df9dbc1e06d8acd5",
+      "status": "timeout",
+      "templateId": "chef",
+      "requestedAt": 1784084753528,
+      "receivedAt": 1784084933819
+    },
+    {
+      "taskId": "754102f69f624f81d7e77dd101be56cf",
+      "status": "timeout",
+      "templateId": "astronaut",
+      "requestedAt": 1784084639453,
+      "receivedAt": 1784084819923
+    },
+    {
+      "taskId": null,
+      "status": "failed",
+      "templateId": "astronaut",
+      "requestedAt": 1784083247669
+    },
+    {
+      "taskId": null,
+      "status": "failed",
+      "templateId": "astronaut",
+      "requestedAt": 1784082748707
+    },
+    {
+      "taskId": null,
+      "status": "failed",
+      "templateId": "astronaut",
+      "requestedAt": 1783922694000
+    }
+  ]
+}
