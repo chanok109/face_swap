@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SwapMagic AI — สลับหน้าสนุกๆ ด้วย AI</title>
+    <meta name="description" content="สลับหน้ากับตัวละครใดก็ได้ด้วย AI แค่อัปโหลดรูปหน้าตัวเอง แล้วเลือกตัวละคร!" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Toast container -->
+    <div class="toast-wrap" id="toastWrap"></div>
+
+    <main class="app-shell">
+      <!-- Header -->
+      <header class="app-header">
+        <div class="logo-wrap">
+          <div class="logo-icon">🎭</div>
+          <div>
+            <h1>SwapMagic AI</h1>
+          </div>
+        </div>
+        <p class="subtitle">อัปโหลดรูปหน้าตัวเอง แล้วเลือกว่าอยากเป็นใคร — AI จะทำให้เลย! ✨</p>
+      </header>
+
+      <!-- Stepper -->
+      <div class="stepper" id="stepper" style="margin-bottom:36px;">
+        <div class="step-dot active" data-step="1" id="dot1">
+          1
+          <span class="step-label">อัปโหลด</span>
+        </div>
+        <div class="step-line" id="line12"></div>
+        <div class="step-dot" data-step="2" id="dot2">
+          2
+          <span class="step-label">เลือกตัวละคร</span>
+        </div>
+        <div class="step-line" id="line23"></div>
+        <div class="step-dot" data-step="3" id="dot3">
+          3
+          <span class="step-label">ผลลัพธ์</span>
+        </div>
+      </div>
+
+      <!-- Step 1: Upload -->
+      <section class="panel" id="panel-1" data-active="true">
+        <h2>📸 อัปโหลดรูปหน้าตัวเอง</h2>
+        <p class="hint">ถ่ายรูปสดด้วยกล้อง หรือเลือกรูปจากเครื่อง — เห็นหน้าชัดๆ จะได้ผลดีที่สุด!</p>
+
+        <!-- 2 choice buttons -->
+        <div class="upload-choice-row" id="uploadChoiceRow">
+          <button class="upload-choice-btn" id="openCameraBtn" type="button">
+            <div class="choice-icon">📷</div>
+            <span class="choice-label">ถ่ายรูป</span>
+            <span class="choice-sub">เปิดกล้องถ่ายเลย</span>
+          </button>
+          <button class="upload-choice-btn" id="pickFileBtn" type="button">
+            <div class="choice-icon">🖼️</div>
+            <span class="choice-label">เลือกรูป</span>
+            <span class="choice-sub">จากอัลบั้ม / ไฟล์</span>
+          </button>
+        </div>
+        <input id="selfieInput" type="file" accept="image/*" hidden />
+
+        <!-- Preview after photo selected -->
+        <div id="previewSection" style="display:none;">
+          <div class="preview-wrap">
+            <img id="selfiePreview" alt="รูปที่เลือก" />
+            <button class="preview-change-btn" id="changePhotoBtn" type="button">🔄 เปลี่ยนรูป</button>
+          </div>
+        </div>
+
+        <!-- Drag & drop zone (optional) -->
+        <div class="drop-zone" id="dropZone">
+          <span>หรือลากรูปมาวางที่นี่ 📂</span>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="toStep2" disabled style="margin-top:8px;">
+          ต่อไป ➡️
+        </button>
+      </section>
+
+      <!-- Camera Modal -->
+      <div class="modal-overlay" id="cameraModal">
+        <div class="modal camera-modal">
+          <div class="modal-title">📷 ถ่ายรูปหน้าตัวเอง</div>
+          <div class="camera-viewfinder">
+            <video id="cameraVideo" autoplay playsinline muted></video>
+            <div class="camera-guide-oval"></div>
+          </div>
+          <canvas id="cameraCanvas" hidden></canvas>
+          <div class="camera-controls">
+            <button class="btn btn-secondary" id="cameraClose">❌ ปิด</button>
+            <button class="btn btn-capture" id="captureBtn">⬤ ถ่าย</button>
+            <button class="btn btn-secondary" id="flipCameraBtn">🔄 สลับ</button>
+          </div>
+          <p style="font-size:0.8rem; color:var(--text-muted); text-align:center; margin-top:8px;">
+            กดปุ่มกลมสีขาวเพื่อถ่าย
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 2: Pick character -->
+      <section class="panel" id="panel-2">
+        <h2>🦸 เลือกตัวละครที่อยากเป็น!</h2>
+        <p class="hint">แตะรูปที่ชอบเลย — สามารถเลื่อนดูได้</p>
+
+        <!-- Category Filters -->
+        <div class="category-filters" id="categoryFilters">
+          <button class="category-btn active" data-category="all">ทั้งหมด</button>
+          <button class="category-btn" data-category="superheroes">🦸‍♂️ ฮีโร่</button>
+          <button class="category-btn" data-category="princesses">👸 เจ้าหญิง</button>
+          <button class="category-btn" data-category="careers">👨‍🚀 อาชีพ</button>
+          <button class="category-btn" data-category="magic">🧙‍♂️ เวทมนตร์</button>
+          <button class="category-btn" data-category="animals">🐯 มาสคอต</button>
+          <button class="category-btn" data-category="traditional">🇹🇭 ชุดไทย</button>
+          <button class="category-btn" data-category="explore">🚀 Explore</button>
+          <button class="category-btn" data-category="discover">🔬 Discover</button>
+          <button class="category-btn" data-category="universe">🛸 Universe</button>
+          <button class="category-btn" data-category="others">อื่นๆ</button>
+        </div>
+
+        <div class="gallery-grid" id="galleryGrid">
+          <p class="loading-text">⏳ กำลังโหลดตัวละคร...</p>
+        </div>
+
+        <div class="panel-actions">
+          <button class="btn btn-secondary" id="backTo1">⬅️ ย้อนกลับ</button>
+          <button class="btn btn-primary" id="toSwap" disabled>✨ สลับหน้าเลย!</button>
+        </div>
+      </section>
+
+      <!-- Step 3: Result -->
+      <section class="panel" id="panel-3">
+        <h2 id="resultTitle">⏳ กำลังสลับหน้า...</h2>
+
+        <!-- Loader -->
+        <div class="loader" id="loader">
+          <div class="spinner-wrap">
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+          </div>
+          <div class="loading-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <p id="loadingMessage">รอแป๊บนึงนะ กำลังทำเวทมนตร์อยู่... 🪄</p>
+        </div>
+
+        <!-- Result -->
+        <div class="result-view" id="resultView" hidden>
+          <div class="result-image-wrap">
+            <img id="resultImage" alt="ผลลัพธ์การสลับหน้า" />
+          </div>
+          <!-- QR Code for mobile -->
+          <div class="qr-code-wrap" id="qrCodeWrap" style="display: none; margin-top: 8px; margin-bottom: 8px; background: rgba(255,255,255,0.05); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border); text-align: center; width: 100%;">
+            <p style="margin-bottom: 12px; font-size: 0.95rem; color: var(--text-secondary);">📱 สแกน QR Code เพื่อรับรูปในมือถือ</p>
+            <img id="qrCodeImage" src="" alt="QR Code" style="width: 140px; height: 140px; border-radius: 8px; background: white; padding: 6px;" />
+          </div>
+          <div class="result-actions">
+            <a class="btn btn-accent" id="downloadBtn" download="swapmagic-result.png" target="_blank" rel="noopener">
+              💾 บันทึกรูป
+            </a>
+            <button class="btn btn-secondary" id="tryAgainBtn">🔄 ลองใหม่</button>
+            <button class="btn btn-primary" id="homeBtn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">🏠 กลับหน้าแรก</button>
+          </div>
+        </div>
+
+        <!-- Error -->
+        <div class="error-view" id="errorView" hidden>
+          <div class="error-icon">😅</div>
+          <p id="errorMessage">เกิดข้อผิดพลาด ลองใหม่อีกครั้งนะ</p>
+          <button class="btn btn-primary" id="retryBtn" style="margin-top:16px;">🔄 ลองอีกครั้ง</button>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer style="margin-top:40px; text-align:center; color:var(--text-muted); font-size:0.8rem;">
+        <p>SwapMagic AI · Powered by AI Face Swap · <a href="admin.html" style="color:var(--primary-light); text-decoration:none;">Admin</a></p>
+      </footer>
+    </main>
+
+    <script src="app.js?v=4"></script>
+  </body>
+</html>

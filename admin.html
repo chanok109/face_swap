@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard — SwapMagic AI</title>
+    <meta name="description" content="SwapMagic AI Admin Panel" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Toast -->
+    <div class="toast-wrap" id="toastWrap"></div>
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="confirmModal">
+      <div class="modal">
+        <div class="modal-title" id="modalTitle">⚠️ ยืนยันการลบ</div>
+        <div class="modal-body" id="modalBody">คุณต้องการลบรูปนี้ใช่ไหม? ไม่สามารถกู้คืนได้</div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="modalCancel">ยกเลิก</button>
+          <button class="btn btn-danger" id="modalConfirm">ลบเลย</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal-overlay" id="imageModal">
+      <div class="modal" style="max-width: 500px; text-align: center;">
+        <div class="modal-title" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
+          <span>📸 ผลลัพธ์</span>
+          <button class="btn btn-secondary" id="imageModalClose" style="padding: 4px 8px;">❌</button>
+        </div>
+        <div class="modal-body" style="padding-bottom: 0;">
+          <img id="imageModalImg" src="" style="width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px; margin-bottom: 16px;" />
+          <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; display: inline-block;">
+             <p style="margin-bottom: 8px; font-size: 0.9rem; color: var(--text-secondary);">📱 สแกน QR Code</p>
+             <img id="imageModalQr" src="" style="width: 150px; height: 150px; border-radius: 8px; background: white; padding: 6px;" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-layout">
+      <!-- Sidebar -->
+      <aside class="admin-sidebar">
+        <div class="sidebar-logo">
+          <div class="logo-icon">🎭</div>
+          <div class="sidebar-logo-text">
+            SwapMagic AI
+            <small>Admin Panel</small>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button class="nav-item active" data-section="dashboard" onclick="switchSection('dashboard', this)">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </button>
+          <button class="nav-item" data-section="gallery" onclick="switchSection('gallery', this)">
+            <span class="nav-icon">🖼️</span>
+            <span>จัดการ Gallery</span>
+          </button>
+          <button class="nav-item" data-section="activity" onclick="switchSection('activity', this)">
+            <span class="nav-icon">📋</span>
+            <span>ประวัติการใช้งาน</span>
+          </button>
+          <button class="nav-item" data-section="settings" onclick="switchSection('settings', this)">
+            <span class="nav-icon">⚙️</span>
+            <span>ตั้งค่า</span>
+          </button>
+          <a class="nav-item" href="/" target="_blank">
+            <span class="nav-icon">🔗</span>
+            <span>เปิดหน้าผู้ใช้</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="api-status">
+            <div class="status-dot" id="apiStatusDot"></div>
+            <span id="apiStatusText">ตรวจสอบ API...</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="admin-main">
+
+        <!-- =================== DASHBOARD =================== -->
+        <section class="admin-section active" id="section-dashboard">
+          <div class="admin-topbar">
+            <h1>📊 Dashboard</h1>
+            <div class="admin-topbar-actions">
+              <button class="btn btn-secondary" onclick="refreshDashboard()" id="refreshBtn">
+                🔄 รีเฟรช
+              </button>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-grid" id="statsGrid">
+            <div class="stat-card" data-color="purple">
+              <div class="stat-icon">🎭</div>
+              <div class="stat-value" id="statTotal">—</div>
+              <div class="stat-label">ทั้งหมด (Total Swaps)</div>
+            </div>
+            <div class="stat-card" data-color="teal">
+              <div class="stat-icon">✅</div>
+              <div class="stat-value" id="statSuccess">—</div>
+              <div class="stat-label">สำเร็จ (Success)</div>
+            </div>
+            <div class="stat-card" data-color="red">
+              <div class="stat-icon">❌</div>
+              <div class="stat-value" id="statFailed">—</div>
+              <div class="stat-label">ล้มเหลว (Failed)</div>
+            </div>
+            <div class="stat-card" data-color="blue">
+              <div class="stat-icon">🖼️</div>
+              <div class="stat-value" id="statGallery">—</div>
+              <div class="stat-label">ตัวละครใน Gallery</div>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <span class="admin-card-title">⏱️ ประวัติล่าสุด</span>
+              <button class="btn btn-secondary" onclick="switchSection('activity', document.querySelector('[data-section=activity]'))">
+                ดูทั้งหมด →
+              </button>
+            </div>
+            <div id="recentActivityTable">
+              <div class="empty-state">
+                <div class="empty-icon">📭</div>
+                <p>ยังไม่มีประวัติการใช้งาน</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gallery Preview -->
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <span class="admin-card-title">🖼️ Gallery ปัจจุบัน</span>
+              <button class="btn btn-secondary" onclick="switchSection('gallery', document.querySelector('[data-section=gallery]'))">
+                จัดการ Gallery →
+              </button>
+            </div>
+            <div class="gallery-admin-grid" id="dashboardGalleryPreview">
+              <div class="empty-state" style="grid-column:1/-1;">
+                <div class="empty-icon">🖼️</div>
+                <p>กำลังโหลด...</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================== GALLERY =================== -->
+        <section class="admin-section" id="section-gallery">
+          <div class="admin-topbar">
+            <h1>🖼️ จัดการ Gallery</h1>
+          </div>
+
+          <!-- Category Gallery Container -->
+          <div id="adminCategoriesContainer">
+            <div class="empty-state">
+              <div class="empty-icon">⏳</div>
+              <p>กำลังโหลด...</p>
+            </div>
+          </div>
+          
+          <input type="file" id="categoryFileInput" accept="image/*" multiple hidden />
+
+          <!-- Category Upload Modal -->
+          <div class="modal-overlay" id="categoryUploadModal">
+            <div class="modal" style="max-width: 600px;">
+              <div class="modal-title" id="uploadModalTitle">อัปโหลดรูปตัวละครใหม่</div>
+              
+              <div id="categoryUploadPreviewList" style="margin-bottom:16px;">
+                <div id="categoryUploadPreviewItems" style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px;"></div>
+                
+                <div class="form-group">
+                  <label class="form-label" for="categoryUploadName">ชื่อตัวละคร (ถ้าอัปโหลดทีละรูป)</label>
+                  <input type="text" id="categoryUploadName" class="form-input" placeholder="เช่น Iron Man, Sailor Moon..." />
+                </div>
+              </div>
+
+              <!-- Progress -->
+              <div class="upload-progress" id="categoryUploadProgress" style="display:none; margin-bottom: 16px;">
+                <p style="font-size:0.85rem; color:var(--text-secondary);" id="categoryUploadProgressText">กำลังอัปโหลด...</p>
+                <div class="progress-bar-wrap">
+                  <div class="progress-bar" id="categoryUploadProgressBar" style="width:0%"></div>
+                </div>
+              </div>
+
+              <div class="modal-actions" style="margin-top: 24px;">
+                <button class="btn btn-secondary" onclick="cancelCategoryUpload()">❌ ยกเลิก</button>
+                <button class="btn btn-primary" id="confirmCategoryUploadBtn" onclick="confirmCategoryUpload()">⬆️ อัปโหลดเลย</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================== ACTIVITY =================== -->
+        <section class="admin-section" id="section-activity">
+          <div class="admin-topbar">
+            <h1>📋 ประวัติการใช้งาน</h1>
+            <div class="admin-topbar-actions">
+              <button class="btn btn-danger" onclick="clearActivity()">🗑️ ล้างประวัติ</button>
+              <button class="btn btn-secondary" onclick="loadActivity()">🔄 รีเฟรช</button>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div id="activityTableWrap">
+              <div class="empty-state">
+                <div class="empty-icon">📭</div>
+                <p>ยังไม่มีประวัติ</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================== SETTINGS =================== -->
+        <section class="admin-section" id="section-settings">
+          <div class="admin-topbar">
+            <h1>⚙️ ตั้งค่า</h1>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <span class="admin-card-title">🔑 API Configuration</span>
+            </div>
+            <div id="settingsInfo">
+              <div class="admin-card" style="background:rgba(139,92,246,0.08); border-color:rgba(139,92,246,0.3);">
+                <p style="color:var(--text-secondary); font-size:0.9rem; line-height:1.7;">
+                  ⚙️ การตั้งค่า API Key ทำผ่านไฟล์ <code style="color:var(--primary-light); background:rgba(139,92,246,0.1); padding:2px 8px; border-radius:4px;">.env</code> ในโฟลเดอร์โปรเจกต์<br><br>
+                  <strong style="color:var(--text-primary);">วิธีตั้งค่า:</strong><br>
+                  1. คัดลอกไฟล์ <code style="color:var(--primary-light);">.env.example</code> เป็น <code style="color:var(--primary-light);">.env</code><br>
+                  2. เพิ่ม API Key ของคุณ: <code style="color:var(--accent);">AIFACESWAP_API_KEY=your_key_here</code><br>
+                  3. รีสตาร์ท server
+                </p>
+              </div>
+
+              <div style="margin-top:24px;">
+                <h3 style="font-size:1rem; font-weight:700; margin-bottom:16px; color:var(--text-primary);">🔌 API ที่แนะนำ</h3>
+                <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap:16px;">
+
+                  <div class="stat-card" data-color="teal" style="padding:20px;">
+                    <div style="font-size:1.1rem; font-weight:700; margin-bottom:4px; color:var(--accent);">LightX API</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">✅ 25 Credits ฟรี · ไม่ต้องบัตรเครดิต</div>
+                    <a href="https://lightxeditor.com" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem; padding:8px 16px;">ไปสมัคร →</a>
+                  </div>
+
+                  <div class="stat-card" data-color="blue" style="padding:20px;">
+                    <div style="font-size:1.1rem; font-weight:700; margin-bottom:4px; color:#60a5fa;">WaveSpeed AI</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">✅ ฟรี มี Rate Limit · REST API สะอาด</div>
+                    <a href="https://wavespeed.ai" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem; padding:8px 16px;">ไปสมัคร →</a>
+                  </div>
+
+                  <div class="stat-card" data-color="purple" style="padding:20px;">
+                    <div style="font-size:1.1rem; font-weight:700; margin-bottom:4px; color:var(--primary-light);">MagicAPI</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">✅ 100 Units ฟรี · แค่ verify email</div>
+                    <a href="https://api.market" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem; padding:8px 16px;">ไปสมัคร →</a>
+                  </div>
+
+                  <div class="stat-card" data-color="purple" style="padding:20px;">
+                    <div style="font-size:1.1rem; font-weight:700; margin-bottom:4px; color:var(--primary-light);">aifaceswap.io</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">⚡ ใช้อยู่แล้ว · คุณภาพดีมาก</div>
+                    <a href="https://aifaceswap.io/api-manage/" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:0.8rem; padding:8px 16px;">ดู API →</a>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <span class="admin-card-title">🛡️ API Status</span>
+            </div>
+            <div id="apiStatusDetail" style="color:var(--text-secondary); font-size:0.9rem;">
+              กำลังตรวจสอบ...
+            </div>
+            <button class="btn btn-secondary" style="margin-top:16px;" onclick="checkApiStatus()">
+              🔍 ตรวจสอบ API
+            </button>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <script src="admin.js?v=2"></script>
+  </body>
+</html>
